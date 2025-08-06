@@ -63,7 +63,7 @@
         }
         input[type="text"],
         input[type="number"],
-        input[type="date"], /* Added date input styling */
+        input[type="date"],
         select {
             width: 100%;
             padding: 12px;
@@ -160,11 +160,6 @@
             </div>
 
             <div class="form-group">
-                <label for="stay-duration">Duration of Stay (in days)</label>
-                <input type="number" id="stay-duration" name="stay-duration" min="1" required>
-            </div>
-
-            <div class="form-group">
                 <label for="start-date">Start Date</label>
                 <input type="date" id="start-date" name="start-date" required>
             </div>
@@ -176,7 +171,20 @@
 
             <div class="form-group">
                 <label for="travel-purpose">Purpose of Travel</label>
-                <input type="text" id="travel-purpose" name="travel-purpose" placeholder="e.g., Tourism, Business, Education" required>
+                <select id="travel-purpose" name="travel-purpose" onchange="toggleOtherPurpose()" required>
+                    <option value="">-- Select purpose --</option>
+                    <option value="Leisure/Tourism">Leisure/Tourism</option>
+                    <option value="Business">Business</option>
+                    <option value="Education">Education</option>
+                    <option value="Visiting Family/Friends">Visiting Family/Friends</option>
+                    <option value="Medical">Medical</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="other-purpose-group" style="display:none;">
+                <label for="other-purpose">Please specify your purpose:</label>
+                <input type="text" id="other-purpose" name="other-purpose">
             </div>
             
             <div class="form-group">
@@ -233,6 +241,20 @@
             const drivingQuestions = document.getElementById('driving-questions');
             drivingQuestions.style.display = (vehicleChoice === 'yes') ? 'block' : 'none';
         }
+        
+        function toggleOtherPurpose() {
+            const purposeChoice = document.getElementById('travel-purpose').value;
+            const otherPurposeGroup = document.getElementById('other-purpose-group');
+            const otherPurposeInput = document.getElementById('other-purpose');
+            
+            if (purposeChoice === 'Other') {
+                otherPurposeGroup.style.display = 'block';
+                otherPurposeInput.setAttribute('required', 'required');
+            } else {
+                otherPurposeGroup.style.display = 'none';
+                otherPurposeInput.removeAttribute('required');
+            }
+        }
 
         function displayFormDetails() {
             const form = document.getElementById('travelForm');
@@ -243,8 +265,21 @@
             let outputHTML = '<ul>';
             
             for (const [key, value] of formData.entries()) {
+                // Skip the "other-purpose" field if "Other" wasn't selected
+                if (key === 'other-purpose' && document.getElementById('travel-purpose').value !== 'Other') {
+                    continue;
+                }
+                
                 const formattedKey = key.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-                outputHTML += `<li><strong>${formattedKey}:</strong> ${value}</li>`;
+                let displayValue = value;
+
+                // Handle the "other-purpose" value
+                if (key === 'other-purpose') {
+                    const mainPurposeValue = document.getElementById('travel-purpose').value;
+                    displayValue = mainPurposeValue + ': ' + value;
+                }
+                
+                outputHTML += `<li><strong>${formattedKey}:</strong> ${displayValue}</li>`;
             }
             
             outputHTML += '</ul>';
