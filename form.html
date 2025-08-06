@@ -63,6 +63,7 @@
         }
         input[type="text"],
         input[type="number"],
+        input[type="email"],
         input[type="date"],
         select {
             width: 100%;
@@ -117,6 +118,13 @@
             margin-bottom: 10px;
             border-radius: 4px;
         }
+        #total-price {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #d9534f;
+            margin-top: 20px;
+            text-align: center;
+        }
         footer {
             background-color: #004085;
             color: white;
@@ -140,6 +148,16 @@
     <div class="container">
         <h2>International Travel Details</h2>
         <form id="travelForm" onsubmit="return displayFormDetails()">
+            <div class="form-group">
+                <label for="full-name">Full Name</label>
+                <input type="text" id="full-name" name="full-name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
             <div class="form-group">
                 <label for="country">Destination Country</label>
                 <select id="country" name="country" required>
@@ -229,6 +247,7 @@
         <h2>Submitted Details</h2>
         <p>Thank you for submitting your travel plan. Below is a summary of the information you provided.</p>
         <div id="completed-form-details"></div>
+        <div id="total-price"></div>
     </div>
     
     <footer>
@@ -256,16 +275,41 @@
             }
         }
 
+        function calculateTotalPrice(startDate, endDate, driving) {
+            const oneDay = 24 * 60 * 60 * 1000; // milliseconds in a day
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const diffDays = Math.round(Math.abs((end - start) / oneDay)) + 1; // +1 to include both start and end day
+
+            // Fictional base prices for calculation
+            const basePricePerDay = 250;
+            const drivingCostPerDay = 50;
+
+            let totalPrice = diffDays * basePricePerDay;
+            if (driving === 'yes') {
+                totalPrice += diffDays * drivingCostPerDay;
+            }
+
+            return totalPrice.toFixed(2);
+        }
+
         function displayFormDetails() {
             const form = document.getElementById('travelForm');
             const formData = new FormData(form);
             const outputDiv = document.getElementById('completed-form-details');
             const completedSection = document.getElementById('completed-form-section');
             
+            // Get values for price calculation
+            const startDate = formData.get('start-date');
+            const endDate = formData.get('end-date');
+            const drivingChoice = formData.get('vehicle-choice');
+
+            // Calculate total price
+            const totalPrice = calculateTotalPrice(startDate, endDate, drivingChoice);
+
             let outputHTML = '<ul>';
             
             for (const [key, value] of formData.entries()) {
-                // Skip the "other-purpose" field if "Other" wasn't selected
                 if (key === 'other-purpose' && document.getElementById('travel-purpose').value !== 'Other') {
                     continue;
                 }
@@ -273,7 +317,6 @@
                 const formattedKey = key.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
                 let displayValue = value;
 
-                // Handle the "other-purpose" value
                 if (key === 'other-purpose') {
                     const mainPurposeValue = document.getElementById('travel-purpose').value;
                     displayValue = mainPurposeValue + ': ' + value;
@@ -285,12 +328,12 @@
             outputHTML += '</ul>';
             
             outputDiv.innerHTML = outputHTML;
+            document.getElementById('total-price').innerHTML = `Estimated Total Price: $${totalPrice}`;
             completedSection.style.display = 'block';
             
-            // Scroll to the completed form section
             completedSection.scrollIntoView({ behavior: 'smooth' });
 
-            return false; // Prevents the form from actually submitting
+            return false;
         }
     </script>
 
