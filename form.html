@@ -239,6 +239,17 @@
                 </div>
             </div>
 
+            <div class="form-group">
+                <label for="payment-method">Preferred Payment Method</label>
+                <select id="payment-method" name="payment-method" required>
+                    <option value="">-- Select a payment method --</option>
+                    <option value="Credit Card">Credit Card</option>
+                    <option value="PayPal">PayPal</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="Cash on Arrival">Cash on Arrival</option>
+                </select>
+            </div>
+
             <button type="submit">Submit Travel Plan</button>
         </form>
     </div>
@@ -279,9 +290,8 @@
             const oneDay = 24 * 60 * 60 * 1000; // milliseconds in a day
             const start = new Date(startDate);
             const end = new Date(endDate);
-            const diffDays = Math.round(Math.abs((end - start) / oneDay)) + 1; // +1 to include both start and end day
+            const diffDays = Math.round(Math.abs((end - start) / oneDay)) + 1;
 
-            // Fictional base prices for calculation
             const basePricePerDay = 250;
             const drivingCostPerDay = 50;
 
@@ -299,12 +309,10 @@
             const outputDiv = document.getElementById('completed-form-details');
             const completedSection = document.getElementById('completed-form-section');
             
-            // Get values for price calculation
             const startDate = formData.get('start-date');
             const endDate = formData.get('end-date');
             const drivingChoice = formData.get('vehicle-choice');
 
-            // Calculate total price
             const totalPrice = calculateTotalPrice(startDate, endDate, drivingChoice);
 
             let outputHTML = '<ul>';
@@ -328,7 +336,7 @@
             outputHTML += '</ul>';
             
             outputDiv.innerHTML = outputHTML;
-            document.getElementById('total-price').innerHTML = `Estimated Total Price: $${totalPrice}`;
+            document.getElementById('total-price').innerHTML = `Estimated Total Price: **$${totalPrice}**`;
             completedSection.style.display = 'block';
             
             completedSection.scrollIntoView({ behavior: 'smooth' });
