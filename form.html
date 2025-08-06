@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Planning Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #007BFF;
+            color: white;
+            padding: 1em 0;
+            text-align: center;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+            padding: 0.5em 0;
+        }
+        nav a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+        }
+        nav a:hover {
+            background-color: #575757;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            padding: 20px;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #driving-questions {
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+            padding-top: 15px;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1em 0;
+            position: relative;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Plan Your Trip</h1>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="form.html">Plan Your Trip</a>
+    </nav>
+
+    <div class="container">
+        <h2>Travel Details Form</h2>
+        <form id="travelForm" onsubmit="return displayFormDetails()">
+            <div class="form-group">
+                <label for="country">Desired Country:</label>
+                <select id="country" name="country" required>
+                    <option value="">--Please select a country--</option>
+                    <option value="United States">United States</option>
+                    <option value="Canada">Canada</option>
+                    <option value="United Kingdom">United Kingdom</option>
+                    <option value="Australia">Australia</option>
+                    <option value="Japan">Japan</option>
+                    <option value="Germany">Germany</option>
+                    <option value="France">France</option>
+                    <option value="Spain">Spain</option>
+                    <option value="Italy">Italy</option>
+                    </select>
+            </div>
+
+            <div class="form-group">
+                <label for="stay-duration">How long do you want to stay? (in days)</label>
+                <input type="number" id="stay-duration" name="stay-duration" min="1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="travel-dates">Preferred Travel Dates:</label>
+                <input type="text" id="travel-dates" name="travel-dates" placeholder="e.g., June 1st - June 15th, 2025" required>
+            </div>
+
+            <div class="form-group">
+                <label for="travel-purpose">Purpose of Travel:</label>
+                <input type="text" id="travel-purpose" name="travel-purpose" placeholder="e.g., Leisure, Business, Study" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="vehicle-choice">Do you want to drive a vehicle in your desired country?</label>
+                <select id="vehicle-choice" name="vehicle-choice" onchange="toggleDrivingQuestions()" required>
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                </select>
+            </div>
+
+            <div id="driving-questions" style="display:none;">
+                <h3>Driving Information</h3>
+                <div class="form-group">
+                    <label for="license-country">Country where your driver's license was issued:</label>
+                    <input type="text" id="license-country" name="license-country">
+                </div>
+                
+                <div class="form-group">
+                    <label for="driving-experience">Years of driving experience:</label>
+                    <input type="number" id="driving-experience" name="driving-experience" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="car-type">What type of vehicle do you plan to drive?</label>
+                    <select id="car-type" name="car-type">
+                        <option value="">--Select a vehicle type--</option>
+                        <option value="car">Standard Car</option>
+                        <option value="motorcycle">Motorcycle</option>
+                        <option value="van">Van</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit">Submit Form</button>
+        </form>
+    </div>
+
+    <div class="container" id="completed-form-section" style="display:none;">
+        <h2>Completed Form Details</h2>
+        <div id="completed-form-details"></div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 Travel Planner. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function toggleDrivingQuestions() {
+            const vehicleChoice = document.getElementById('vehicle-choice').value;
+            const drivingQuestions = document.getElementById('driving-questions');
+            drivingQuestions.style.display = (vehicleChoice === 'yes') ? 'block' : 'none';
+        }
+
+        function displayFormDetails() {
+            const form = document.getElementById('travelForm');
+            const formData = new FormData(form);
+            const outputDiv = document.getElementById('completed-form-details');
+            const completedSection = document.getElementById('completed-form-section');
+            
+            let outputHTML = '<ul>';
+            
+            for (const [key, value] of formData.entries()) {
+                const formattedKey = key.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                outputHTML += `<li><strong>${formattedKey}:</strong> ${value}</li>`;
+            }
+            
+            outputHTML += '</ul>';
+            
+            outputDiv.innerHTML = outputHTML;
+            completedSection.style.display = 'block';
+            
+            // Scroll to the completed form section
+            completedSection.scrollIntoView({ behavior: 'smooth' });
+
+            return false; // Prevents the form from actually submitting to a server
+        }
+    </script>
+
+</body>
+</html>
